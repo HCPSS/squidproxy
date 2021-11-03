@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# clear logs once a day
+while true
+do
+  sleep 86400
+  echo -n >/var/log/squid/access.log
+  echo -n >/var/log/squid/cache.log
+done &
+
+squid
+
+# wait for log file
+while [ ! -f /var/log/squid/access.log ]
+do
+  sleep 1
+done
+
+tail -f /var/log/squid/access.log

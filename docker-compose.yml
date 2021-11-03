@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  squid:
+    build: .
+    image: reg.hcpss.org/ops/squidproxy:1
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
