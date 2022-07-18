@@ -15,6 +15,9 @@ services:
         mode: host
     secrets:
       - passwords
+  squid-latest:
+    build: .
+    image: nickadam/squidproxy:latest
 secrets:
   passwords:
     external: true
