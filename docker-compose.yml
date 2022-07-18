@@ -2,9 +2,12 @@ version: '3.7'
 services:
   squid:
     build: .
-    image: nickadam/squidproxy:1
+    image: nickadam/squidproxy:2
     environment:
       PASSWORDS_FILE: /run/secrets/passwords
+      HOST_OVERRIDES: |
+        127.0.0.1:example.com
+        127.0.0.2:foo.example.com
     ports:
       - target: 80
         published: 80

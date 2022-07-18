@@ -1,6 +1,15 @@
 #!/bin/sh
 
 # set passwords by env var
+if [ ! -z "$HOST_OVERRIDES" ]
+then
+  for HOST_OVERRIDE in $HOST_OVERRIDES
+  do
+    echo "$HOST_OVERRIDE" | sed 's/:/ /' | tee -a /etc/hosts
+  done
+fi
+
+# set passwords by env var
 if [ ! -z "$PASSWORDS" ]
 then
   echo "$PASSWORDS" > /etc/squid/passwords
