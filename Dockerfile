@@ -1,8 +1,8 @@
-FROM alpine
+FROM ubuntu:22.04
 
-RUN apk add squid tini
+RUN apt update && apt install -y squid tini
 
-COPY --chmod=644 squid.conf /etc/squid/
+COPY --chmod=644 squid.conf /
 
 COPY --chmod=755 docker-entrypoint /
 

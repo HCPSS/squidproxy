@@ -2,22 +2,27 @@ version: '3.7'
 services:
   squid:
     build: .
-    image: nickadam/squidproxy:2
+    image: reg.hcpss.org/ops/squidproxy:v3.0.0
     environment:
-      PASSWORDS_FILE: /run/secrets/passwords
-      HOST_OVERRIDES: |
-        127.0.0.1:example.com
-        127.0.0.2:foo.example.com
+      LDAP_HOST: ldaps://ihap.hcpss.org
+      LDAP_BASE: DC=hcpss,DC=org
+      LDAP_READ_USER: readsa@inst.hcpss.org
+      LDAP_READ_PASS_FILE: /run/secrets/instreadsa_password
+      LOCAL_NETS: |
+        acl localnet src 172.18.0.0/24   # dev
+        acl localnet src 10.220.13.0/24  # ivanti CO
+        acl localnet src 10.230.13.0/24  # ivanti AO
+        acl localnet src 10.220.192.0/19 # always on CO
+        acl localnet src 10.230.192.0/19 # always on AO
+        acl localnet src 10.223.13.0/24  # security tools CO
+        acl localnet src 10.233.13.0/24  # security tools AO
     ports:
       - target: 80
-        published: 80
+        published: 8888
         protocol: tcp
         mode: host
     secrets:
-      - passwords
-  squid-latest:
-    build: .
-    image: nickadam/squidproxy:latest
+      - instreadsa_password
 secrets:
-  passwords:
+  instreadsa_password:
     external: true

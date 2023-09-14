@@ -1,25 +1,17 @@
 #!/bin/sh
 
-# set passwords by env var
-if [ ! -z "$HOST_OVERRIDES" ]
-then
-  for HOST_OVERRIDE in $HOST_OVERRIDES
-  do
-    echo "$HOST_OVERRIDE" | sed 's/:/ /' | tee -a /etc/hosts
-  done
-fi
+# get LOCAL_NETS line
+localnets_line=$(grep -n LOCAL_NETS /squid.conf | grep -o -e "[0-9]\+")
 
-# set passwords by env var
-if [ ! -z "$PASSWORDS" ]
-then
-  echo "$PASSWORDS" > /etc/squid/passwords
-fi
-
-# set passwords by env var secrets file
-if [ ! -z "$PASSWORDS_FILE" ]
-then
-  cat "$PASSWORDS_FILE" > /etc/squid/passwords
-fi
+# write squid conf
+cat /squid.conf \
+  | sed "s/LDAP_HOST/$(echo $LDAP_HOST | sed 's/\//\\\//g')/" \
+  | sed "s/LDAP_READ_USER/$LDAP_READ_USER/" \
+  | sed "s/LDAP_READ_PASS_FILE/$(echo $LDAP_READ_PASS_FILE | sed 's/\//\\\//g')/" \
+  | sed "s/LDAP_BASE/$LDAP_BASE/" > /squid_temp.conf
+head -n $(($localnets_line-1)) /squid_temp.conf  > /etc/squid/squid.conf
+echo "$LOCAL_NETS"                               >> /etc/squid/squid.conf
+tail -n +$(($localnets_line+1)) /squid_temp.conf >> /etc/squid/squid.conf
 
 # clear logs once a day
 while true
@@ -29,6 +21,7 @@ do
   echo -n >/var/log/squid/cache.log
 done &
 
+# start squid in background
 squid
 
 # wait for log file
