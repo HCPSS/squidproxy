@@ -2,7 +2,7 @@ version: '3.7'
 services:
   squid:
     build: .
-    image: reg.hcpss.org/ops/squidproxy:v3.0.0
+    image: reg.hcpss.org/library/squidproxy:v3.0.0
     environment:
       LDAP_HOST: ldaps://ihap.hcpss.org
       LDAP_BASE: DC=hcpss,DC=org
