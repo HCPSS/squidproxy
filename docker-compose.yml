@@ -4,25 +4,20 @@ services:
     build: .
     image: reg.hcpss.org/library/squidproxy:v3.0.0
     environment:
-      LDAP_HOST: ldaps://ihap.hcpss.org
-      LDAP_BASE: DC=hcpss,DC=org
-      LDAP_READ_USER: readsa@inst.hcpss.org
-      LDAP_READ_PASS_FILE: /run/secrets/instreadsa_password
+      LDAP_HOST: ldaps://example.com
+      LDAP_BASE: DC=example,DC=com
+      LDAP_READ_USER: readuser@example.com
+      LDAP_READ_PASS_FILE: /run/secrets/readuser_password
       LOCAL_NETS: |
         acl localnet src 172.18.0.0/24   # dev
-        acl localnet src 10.220.13.0/24  # ivanti CO
-        acl localnet src 10.230.13.0/24  # ivanti AO
-        acl localnet src 10.220.192.0/19 # always on CO
-        acl localnet src 10.230.192.0/19 # always on AO
-        acl localnet src 10.223.13.0/24  # security tools CO
-        acl localnet src 10.233.13.0/24  # security tools AO
+        acl localnet src 172.19.0.0/24   # other net
     ports:
       - target: 80
         published: 8888
         protocol: tcp
         mode: host
     secrets:
-      - instreadsa_password
+      - readuser_password
 secrets:
-  instreadsa_password:
+  readuser_password:
     external: true
